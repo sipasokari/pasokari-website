@@ -50,19 +50,19 @@ export default function HomeContent() {
 
   // --- EFFECTS ---
 
-  // 1. FETCH DATA PRODUK (DARI SERVER RAILWAY)
+  // --- 1. FETCH DATA DARI RENDER ---
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch('https://pasokari-api-production.up.railway.app/api/products');
+        const res = await fetch('https://pasokari-api-271h.onrender.com/api/products');
         
         if (!res.ok) throw new Error('Gagal mengambil data');
         
         const data = await res.json();
-        setCategoryData(data);
+        setCategoryData(data); 
       } catch (err) {
         console.error("Gagal koneksi ke backend:", err);
-        setCategoryData(fullData.categoryData); 
+        setCategoryData(fullData.categoryData);
       }
     };
 

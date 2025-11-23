@@ -31,7 +31,7 @@ export default function Contact({ t, currentInquiry, lang, onResetInquiry }) {
     const data = Object.fromEntries(formData.entries());
 
     try {
-        const response = await fetch('https://pasokari-api-production.up.railway.app/api/contact', { 
+        const response = await fetch('https://pasokari-api-271h.onrender.com/api/contact', { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data) 
@@ -94,10 +94,9 @@ export default function Contact({ t, currentInquiry, lang, onResetInquiry }) {
                     </div>
                 </div>
 
-                {/* GOOGLE MAPS (Valid dengan Auto Translate) */}
                 <div className="contact-map">
                     <iframe 
-                        src={`https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15855.386889167872!2d106.858841!3d-6.541032!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69c1eb3be9c391%3A0x716f08e5ede1c9c9!2sCitra%20Sentul%20Raya%20Sirkuit%20Sentul%20Ciputra%20Group!5e0!3m2!1sid!2sid!4v1763793523072!5m2!1sid!2sid?hl=${lang}`}
+                        src={`https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15855.386889167872!2d106.858841!3d-6.541032!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69c1eb3be9c391%3A0x716f08e5ede1c9c9!2sCitra%20Sentul%20Raya%20Sirkuit%20Sentul%20Ciputra%20Group!5e0!3m2!1sid!2sid!4v1763793523072!5m2!1sid!2sid`}
                         width="100%" 
                         height="100%" 
                         style={{border:0}} 
@@ -107,10 +106,8 @@ export default function Contact({ t, currentInquiry, lang, onResetInquiry }) {
                         title="Lokasi Pasokari"
                     ></iframe>
                 </div>
-
             </div>
 
-            {/* BAGIAN KANAN: FORMULIR */}
             <div className="contact-form-container hidden-on-load">
                 <h3>{t.contactFormTitleAlt}</h3>
                 <p>{t.contactFormDescAlt}</p>
