@@ -195,7 +195,7 @@ html.dark-mode .nav-center a.active {
 }
 .nav-mobile.active { transform: translateX(0); }
 .nav-mobile a {
-  font-size: 1.2rem; padding: 1rem 0; font-weight: 500; color: var(--text-dark);
+  font-size: 1.2rem; padding: 1rem 0; font-weight: 500; color: burlywood;
   text-decoration: none; transition: color 0.3s linear; width: 100%; text-align: center;
 }
 .nav-mobile a:hover { color: var(--green-primary); }
