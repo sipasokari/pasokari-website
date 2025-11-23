@@ -23,20 +23,36 @@ export default function Contact({ t, currentInquiry, lang, onResetInquiry }) {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); setIsSubmitting(true);
+    e.preventDefault(); 
+    setIsSubmitting(true);
+    setFormStatus({ type: '', message: '' });
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
     try {
-        await fetch('https://formspree.io/f/xgvnbkoe', { 
+        const response = await fetch('https://pasokari-api-production.up.railway.app/api/contact', { 
             method: 'POST', 
-            body: new FormData(e.target), 
-            headers: {'Accept': 'application/json'} 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data) 
         });
-        setFormStatus({type:'success', message: t.formSuccess}); 
-        e.target.reset(); 
-        setMessageBody(''); 
-        onResetInquiry(); 
-    } catch {
+        
+        const result = await response.json();
+
+        if (response.ok) {
+            setFormStatus({type:'success', message: t.formSuccess}); 
+            e.target.reset(); 
+            setMessageBody(''); 
+            if (onResetInquiry) onResetInquiry(); 
+        } else {
+            throw new Error(result.message || 'Gagal mengirim pesan.');
+        }
+    } catch (error) {
+        console.error("Error:", error);
         setFormStatus({type:'error', message: t.formErrorServer});
-    } finally { setIsSubmitting(false); }
+    } finally { 
+        setIsSubmitting(false); 
+    }
   };
 
   return (
@@ -78,10 +94,10 @@ export default function Contact({ t, currentInquiry, lang, onResetInquiry }) {
                     </div>
                 </div>
 
-                {/* --- GOOGLE MAPS EMBED --- */}
+                {/* GOOGLE MAPS (Valid dengan Auto Translate) */}
                 <div className="contact-map">
                     <iframe 
-                        src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3963.860559773308!2d106.8588411153728!3d-6.541032195269094!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69c086e77c369f%3A0x4e31ac1a59912404!2sCitra%20Sentul%20Raya!5e0!3m2!1s${lang}!2sid!4v1700000000000!5m2!1s${lang}!2sid`}
+                        src={`https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15855.386889167872!2d106.858841!3d-6.541032!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69c1eb3be9c391%3A0x716f08e5ede1c9c9!2sCitra%20Sentul%20Raya%20Sirkuit%20Sentul%20Ciputra%20Group!5e0!3m2!1sid!2sid!4v1763793523072!5m2!1sid!2sid?hl=${lang}`}
                         width="100%" 
                         height="100%" 
                         style={{border:0}} 
@@ -91,7 +107,6 @@ export default function Contact({ t, currentInquiry, lang, onResetInquiry }) {
                         title="Lokasi Pasokari"
                     ></iframe>
                 </div>
-                {/* ------------------------------------------------- */}
 
             </div>
 
@@ -104,17 +119,7 @@ export default function Contact({ t, currentInquiry, lang, onResetInquiry }) {
                     <div className="form-group"><input type="tel" name="phone" placeholder={t.formPhonePlaceholder} required /></div>
                     <div className="form-group"><input type="email" name="email" placeholder={t.formEmailPlaceholder} required /></div>
                     <div className="form-group">
-                        <textarea 
-                            name="message" 
-                            rows="5" 
-                            placeholder={t.formMessagePlaceholder} 
-                            required 
-                            value={messageBody} 
-                            onChange={(e) => {
-                                setMessageBody(e.target.value);
-                                if(currentInquiry) onResetInquiry();
-                            }}
-                        ></textarea>
+                        <textarea name="message" rows="5" placeholder={t.formMessagePlaceholder} required value={messageBody} onChange={(e) => {setMessageBody(e.target.value); if(currentInquiry) onResetInquiry();}}></textarea>
                     </div>
                     {formStatus.message && <div id="formStatus" className={formStatus.type}>{formStatus.message}</div>}
                     <button type="submit" className="cta-button form-submit-btn" disabled={isSubmitting}>{isSubmitting ? t.formSending : t.formSend}</button>
