@@ -12,6 +12,17 @@
   --image-filter: none;
 }
 
+/* ===== BACKGROUND (NOISE & GRADIENT) ===== */
+body {
+  background-color: var(--bg-light);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+html.dark-mode body {
+  background-color: #0a0a0a;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.07'/%3E%3C/svg%3E");
+}
+
 /* ===== DEFINISI DARK MODE ===== */
 html.dark-mode {
   --green-primary: #00b860;
@@ -213,38 +224,70 @@ html.dark-mode .theme-toggle .icon-moon { display: block; }
 html.dark-mode .theme-toggle .icon-sun { display: none; }
 html.dark-mode .menu-toggle span { background: var(--text-dark); }
 
-/* ===== HERO SECTION (MODERN LUXURY) ===== */
+/* ===== HERO SECTION (2025 MODERN STYLE) ===== */
 .hero-section {
-  display: flex; align-items: center; justify-content: center;
-  min-height: 100vh; text-align: center; padding: 150px 5% 100px;
-  background: url('/assets/hero-bg.jpg') center/cover no-repeat fixed;
-  position: relative; overflow: hidden;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center; 
+  padding: 150px 5% 100px;
+  position: relative; 
+  overflow: hidden;
+  
+  /* Background lebih gelap & dramatis */
+  background: 
+    linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.9)), /* Overlay */
+    url('/assets/hero-bg.jpg') center/cover no-repeat fixed;
 }
-.hero-section::after {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.8) 100%);
-  z-index: 1;
-}
-.hero-content { 
-  position: relative; z-index: 2; max-width: 900px; margin: 0 auto;
-  animation: fadeUp 1s ease-out forwards; opacity: 0; transform: translateY(30px);
-}
+
+/* Judul Utama: GRADIENT TEXT */
 .hero-content h1 { 
-  font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800; margin-bottom: 1.5rem; 
-  color: #ffffff; line-height: 1.1; text-shadow: 0 4px 20px rgba(0,0,0,0.5); letter-spacing: -1px;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 800; 
+  margin-bottom: 1rem; 
+  line-height: 1.1;
+  letter-spacing: -2px;
+  
+  /* Membuat teks jadi gradient (Putih ke Hijau Muda) */
+  background: linear-gradient(135deg, #ffffff 0%, #e0f2f1 50%, #4ade80 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  
+  /* Drop shadow halus */
+  filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
 }
+
 .hero-content p { 
-  font-size: clamp(1.1rem, 2vw, 1.3rem); max-width: 700px; margin: 0 auto 2.5rem; 
-  color: rgba(255, 255, 255, 0.9); line-height: 1.6; font-weight: 400; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  font-size: clamp(1.1rem, 2vw, 1.5rem); 
+  max-width: 800px; 
+  margin: 0 auto 3rem; 
+  color: rgba(255, 255, 255, 0.8); 
+  font-weight: 400;
+  letter-spacing: 0.5px;
 }
+
+/* Tombol Hero yang "Glowing" */
 .hero-content .cta-button {
-  padding: 16px 40px; font-size: 1.1rem; border-radius: 50px; background: var(--green-primary);
-  border: none; box-shadow: 0 10px 30px rgba(0, 168, 89, 0.4); transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  padding: 18px 45px;
+  font-size: 1.1rem;
+  border-radius: 100px;
+  background: var(--green-primary);
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 0 30px rgba(0, 168, 89, 0.4); /* Glow Effect */
+  transition: all 0.4s ease;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
 }
+
 .hero-content .cta-button:hover {
-  transform: translateY(-5px) scale(1.05); background: var(--green-dark); box-shadow: 0 15px 40px rgba(0, 168, 89, 0.6);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 0 50px rgba(0, 168, 89, 0.8); /* Glow makin terang */
+  background: #fff;
+  color: var(--green-primary);
 }
-@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
 /* ===== CTA BUTTONS ===== */
 .cta-button {
@@ -275,26 +318,101 @@ html.dark-mode .cta-button.secondary:hover { background: rgba(0, 184, 96, 0.1); 
     background-color: var(--green-primary); border-radius: 2px;
 }
 
-/* ===== PRODUCTS ===== */
-#products { background-color: var(--bg-secondary); }
+/* ===== PRODUCTS SECTION (MODERN BENTO STYLE) ===== */
+#products { 
+  background-color: var(--bg-secondary); 
+  padding: 100px 5%; /* Padding lebih lega */
+}
+
 .product-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 30px; max-width: 1200px; margin: 0 auto; perspective: 1500px;
+  display: grid;
+  /* Mobile: 1 kolom, Tablet: 2 kolom, Desktop: 3 kolom */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  perspective: 1000px; /* Untuk efek 3D */
 }
+
+/* Kartu Produk Premium */
 .product-card {
-  background: white; border-radius: 12px; overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-  transition: box-shadow 0.3s ease, transform 0.2s ease-out;
-  cursor: pointer; display: flex; flex-direction: column;
-  text-decoration: none; will-change: transform;
+  position: relative;
+  height: 320px; /* Tinggi tetap agar seragam */
+  border-radius: 24px; /* Sudut sangat membulat */
+  overflow: hidden; /* Agar gambar tidak keluar */
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  /* Background hitam default jika gambar loading */
+  background-color: #1a1a1a; 
 }
-.product-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-.product-card img { width: 100%; height: 180px; object-fit: cover; border-bottom: 1px solid var(--border-color); }
+
+/* Gambar Produk (Full Cover) */
+.product-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Mengisi penuh kartu */
+  transition: transform 0.7s ease; /* Zoom lambat saat hover */
+  opacity: 0.9; /* Sedikit redup agar teks terbaca */
+}
+
+/* Judul Kategori (Overlay di Dalam) */
 .product-card h3 {
-  background: var(--green-primary); color: white;
-  padding: 12px 15px; font-size: 1rem; text-align: center; margin-top: auto;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 30px;
+  
+  /* Gradasi Hitam di Bawah Teks */
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0) 100%);
+  
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: -0.5px;
+  transform: translateY(0);
+  transition: transform 0.3s ease, padding-bottom 0.3s ease;
 }
-html.dark-mode .product-card img { filter: var(--image-filter); }
+
+/* Efek Dekorasi Garis Hijau (Aksen) */
+.product-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: var(--green-primary);
+  transform: scaleX(0); /* Sembunyi dulu */
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+
+/* --- INTERAKSI HOVER --- */
+.product-card:hover {
+  transform: translateY(-10px); /* Naik ke atas */
+  box-shadow: 0 20px 50px rgba(0,0,0,0.2); /* Bayangan lebih dalam */
+}
+
+.product-card:hover img {
+  transform: scale(1.15); /* Gambar zoom in */
+  opacity: 1; /* Gambar jadi terang penuh */
+}
+
+.product-card:hover h3 {
+  padding-bottom: 40px; /* Teks naik sedikit memberi ruang */
+}
+
+.product-card:hover::after {
+  transform: scaleX(1); /* Garis hijau muncul */
+}
+
+/* Dark Mode Adaptation */
+html.dark-mode #products {
+  background-color: #111; /* Latar belakang section gelap */
+}
 
 /* ===== GALLERY (ELEGANT OVERLAY STYLE) ===== */
 #gallery { background-color: var(--bg-light); }
@@ -813,6 +931,9 @@ html.dark-mode .footer {
   font-weight: 600; line-height: 1.3; 
   text-align: center; display: flex; align-items: center; justify-content: center; min-height: 50px; width: 100%;
 }
+
+.text-center { text-align: center; }
+.mt-10 { margin-top: 2.5rem; }
 
 /* ===== UTILITY & FLOATING ===== */
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
