@@ -1,5 +1,6 @@
-'use client';
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { Translations } from '../types';
 
 const galleryImages = [
   { src: 'selada_romaine_hijau.jpg', key: 'galleryAlt1' },
@@ -14,14 +15,18 @@ const galleryImages = [
   { src: 'bakso_&_sosis.jpg', key: 'galleryAlt10' }
 ];
 
-export default function Gallery({ t }) {
+interface GalleryProps {
+  t: Translations;
+}
+
+export default function Gallery({ t }: GalleryProps) {
   const [visibleCount, setVisibleCount] = useState(10);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
   // Keyboard Nav untuk Lightbox
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (!lightboxOpen) return;
       if (e.key === 'Escape') setLightboxOpen(false);
       if (e.key === 'ArrowRight') setLightboxIndex((prev) => (prev + 1) % galleryImages.length);
@@ -42,7 +47,13 @@ export default function Gallery({ t }) {
                 className="gallery-item hidden-on-load" 
                 onClick={() => { setLightboxIndex(idx); setLightboxOpen(true); }}
               >
-                  <img src={`/assets/gallery/${item.src}`} alt={t[item.key]} loading="lazy" />
+                  <Image 
+                    src={`/assets/gallery/${item.src}`} 
+                    alt={t[item.key]} 
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                  />
                   <div className="gallery-overlay"><span>{t[item.key]}</span></div>
               </div>
           ))}
@@ -55,13 +66,19 @@ export default function Gallery({ t }) {
       </section>
 
       {/* LIGHTBOX UI */}
-      <div className={`lightbox ${lightboxOpen ? 'visible' : ''}`} onClick={(e) => e.target.className.includes('lightbox') && setLightboxOpen(false)}>
+      <div className={`lightbox ${lightboxOpen ? 'visible' : ''}`} onClick={(e) => (e.target as HTMLElement).className.includes('lightbox') && setLightboxOpen(false)}>
         <span className="lightbox-close" onClick={() => setLightboxOpen(false)}>&times;</span>
         <button className="lightbox-prev" onClick={() => setLightboxIndex((idx) => (idx - 1 + galleryImages.length) % galleryImages.length)}>&#10094;</button>
         <button className="lightbox-next" onClick={() => setLightboxIndex((idx) => (idx + 1) % galleryImages.length)}>&#10095;</button>
-        <div className="lightbox-content">
-            <img id="lightboxImage" src={`/assets/gallery/${galleryImages[lightboxIndex].src}`} alt="Zoomed" />
-            <div className="lightbox-caption">{t[galleryImages[lightboxIndex].key]} - {t.galleryCaption}</div>
+        <div className="lightbox-content" style={{ position: 'relative', width: '90vw', height: '80vh' }}>
+            <Image 
+              id="lightboxImage" 
+              src={`/assets/gallery/${galleryImages[lightboxIndex].src}`} 
+              alt="Zoomed" 
+              fill
+              className="object-contain"
+            />
+            <div className="lightbox-caption" style={{ position: 'absolute', bottom: -40, left: 0, right: 0 }}>{t[galleryImages[lightboxIndex].key]} - {t.galleryCaption}</div>
         </div>
       </div>
     </>

@@ -1,7 +1,14 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, ReactNode } from 'react';
 
-export default function Modal({ isOpen, onClose, children, className = '' }) {
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: ReactNode;
+  className?: string;
+}
+
+export default function Modal({ isOpen, onClose, children, className = '' }: ModalProps) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -17,7 +24,7 @@ export default function Modal({ isOpen, onClose, children, className = '' }) {
     <div 
       className={`modal is-open`} 
       onClick={(e) => {
-        if (e.target.className.includes('modal')) onClose();
+        if ((e.target as HTMLElement).className.includes('modal')) onClose();
       }}
     >
       <div className={`modal-content ${className}`}>

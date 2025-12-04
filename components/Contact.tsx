@@ -1,7 +1,15 @@
-'use client';
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { Translations, Inquiry } from '../types';
 
-export default function Contact({ t, currentInquiry, lang, onResetInquiry }) {
+interface ContactProps {
+  t: Translations;
+  currentInquiry: Inquiry | null;
+  lang: 'id' | 'en';
+  onResetInquiry: () => void;
+}
+
+export default function Contact({ t, currentInquiry, lang, onResetInquiry }: ContactProps) {
   const [messageBody, setMessageBody] = useState('');
   const [formStatus, setFormStatus] = useState({ type: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,16 +30,16 @@ export default function Contact({ t, currentInquiry, lang, onResetInquiry }) {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); 
     setIsSubmitting(true);
     setFormStatus({ type: '', message: '' });
 
-    const formData = new FormData(e.target);
+    const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
 
     try {
-        const response = await fetch('https://pasokari-api-271h.onrender.com/api/contact', { 
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/contact`, { 
             method: 'POST', 
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data) 
@@ -41,7 +49,7 @@ export default function Contact({ t, currentInquiry, lang, onResetInquiry }) {
 
         if (response.ok) {
             setFormStatus({type:'success', message: t.formSuccess}); 
-            e.target.reset(); 
+            (e.target as HTMLFormElement).reset(); 
             setMessageBody(''); 
             if (onResetInquiry) onResetInquiry(); 
         } else {
@@ -87,10 +95,10 @@ export default function Contact({ t, currentInquiry, lang, onResetInquiry }) {
                 <div className="info-block">
                     <strong>{t.contactSocialTitle}</strong>
                     <div className="contact-social-icons">
-                        <a href="https://wa.me/628111289655" target="_blank"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" alt="WA" /></a>
-                        <a href="mailto:sipasokari@gmail.com"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/gmail.svg" alt="Email" /></a>
-                        <a href="https://www.instagram.com/pasokari/" target="_blank"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="IG" /></a>
-                        <a href="https://www.tiktok.com/@pasokari_id" target="_blank"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tiktok.svg" alt="TikTok" /></a>
+                        <a href="https://wa.me/628111289655" target="_blank"><Image src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" alt="WA" width={22} height={22} /></a>
+                        <a href="mailto:sipasokari@gmail.com"><Image src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/gmail.svg" alt="Email" width={22} height={22} /></a>
+                        <a href="https://www.instagram.com/pasokari/" target="_blank"><Image src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="IG" width={22} height={22} /></a>
+                        <a href="https://www.tiktok.com/@pasokari_id" target="_blank"><Image src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/tiktok.svg" alt="TikTok" width={22} height={22} /></a>
                     </div>
                 </div>
 
@@ -100,7 +108,7 @@ export default function Contact({ t, currentInquiry, lang, onResetInquiry }) {
                         width="100%" 
                         height="100%" 
                         style={{border:0}} 
-                        allowFullScreen="" 
+                        allowFullScreen={true} 
                         loading="lazy" 
                         referrerPolicy="no-referrer-when-downgrade"
                         title="Lokasi Pasokari"
@@ -116,7 +124,7 @@ export default function Contact({ t, currentInquiry, lang, onResetInquiry }) {
                     <div className="form-group"><input type="tel" name="phone" placeholder={t.formPhonePlaceholder} required /></div>
                     <div className="form-group"><input type="email" name="email" placeholder={t.formEmailPlaceholder} required /></div>
                     <div className="form-group">
-                        <textarea name="message" rows="5" placeholder={t.formMessagePlaceholder} required value={messageBody} onChange={(e) => {setMessageBody(e.target.value); if(currentInquiry) onResetInquiry();}}></textarea>
+                        <textarea name="message" rows={5} placeholder={t.formMessagePlaceholder} required value={messageBody} onChange={(e) => {setMessageBody(e.target.value); if(currentInquiry) onResetInquiry();}}></textarea>
                     </div>
                     {formStatus.message && <div id="formStatus" className={formStatus.type}>{formStatus.message}</div>}
                     <button type="submit" className="cta-button form-submit-btn" disabled={isSubmitting}>{isSubmitting ? t.formSending : t.formSend}</button>

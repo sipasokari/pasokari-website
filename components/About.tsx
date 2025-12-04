@@ -1,9 +1,23 @@
-export default function About({ t }) {
+import Image from 'next/image';
+import { Translations } from '../types';
+
+interface AboutProps {
+  t: Translations;
+}
+
+export default function About({ t }: AboutProps) {
   return (
     <section id="about" className="section-container about-section">
         <div className="about-container">
             <div className="about-image-wrapper hidden-on-load">
-                <img src="/assets/about-image.jpg" alt="Tentang Pasokari" />
+                <Image 
+                  src="/assets/about-image.jpg" 
+                  alt="Tentang Pasokari" 
+                  width={500} 
+                  height={400} 
+                  className="object-cover"
+                  style={{ width: '100%', height: '400px' }}
+                />
                 <div className="floating-badge">
                     <div className="icon">📦</div>
                     <div>

@@ -1,9 +1,17 @@
-export default function Footer({ t, onSmoothScroll }) {
-  const handleFaqClick = (e) => {
+import { Translations } from '../types';
+
+interface FooterProps {
+  t: Translations;
+  onSmoothScroll?: (e: React.MouseEvent<HTMLAnchorElement>, id: string) => void;
+}
+
+export default function Footer({ t, onSmoothScroll }: FooterProps) {
+  const handleFaqClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const faqSection = document.getElementById('faq');
     if (faqSection) {
-      const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 70;
+      const navbar = document.querySelector('.navbar') as HTMLElement;
+      const navbarHeight = navbar?.offsetHeight || 70;
       window.scrollTo({ 
         top: faqSection.offsetTop - navbarHeight, 
         behavior: 'smooth' 

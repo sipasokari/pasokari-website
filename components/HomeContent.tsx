@@ -1,6 +1,8 @@
 'use client';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import fullData from '../data.json';
+import NextImage from 'next/image';
+import { ProductData, CategoryItem, CategoryData, Translations, FullData, Inquiry } from '../types';
 
 // --- IMPORT KOMPONEN ---
 import Navbar from './Navbar';
@@ -15,7 +17,7 @@ import Footer from './Footer';
 import Modal from './ui/Modal';
 
 // --- DATA STATIS ---
-const categoryKeys = {
+const categoryKeys: Record<string, { title: string; desc: string }> = {
   'Sayuran': { title: 'categoryVegetables', desc: 'modalSayuranDesc' },
   'Herbs & Spices': { title: 'categoryHerbs', desc: 'modalHerbsDesc' },
   'Buah-buahan': { title: 'categoryFruits', desc: 'modalBuahDesc' },
@@ -23,9 +25,13 @@ const categoryKeys = {
   'Frozen Food': { title: 'categoryFrozen', desc: 'modalFrozenDesc' }
 };
 
-export default function HomeContent() {
+interface HomeContentProps {
+  initialCategoryData: CategoryData | null;
+}
+
+export default function HomeContent({ initialCategoryData }: HomeContentProps) {
   // --- GLOBAL STATE ---
-  const [lang, setLang] = useState('id');
+  const [lang, setLang] = useState<'id' | 'en'>('id');
   const [darkMode, setDarkMode] = useState(true);
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('home');
@@ -34,40 +40,23 @@ export default function HomeContent() {
 
   // --- MODAL STATE ---
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [productDetailOpen, setProductDetailOpen] = useState(false);
-  const [selectedProductDetail, setSelectedProductDetail] = useState(null);
+  const [selectedProductDetail, setSelectedProductDetail] = useState<{ id: string; display: string; imgSrc: string } | null>(null);
   const [modalSearchTerm, setModalSearchTerm] = useState('');
 
   // --- INQUIRY STATE ---
-  const [currentInquiry, setCurrentInquiry] = useState(null);
+  const [currentInquiry, setCurrentInquiry] = useState<Inquiry | null>(null);
 
   // --- DATA STATE (PRODUK DARI DATABASE) ---
-  const [categoryData, setCategoryData] = useState(null); 
+  const [categoryData, setCategoryData] = useState<CategoryData | null>(initialCategoryData); 
   
   // Terjemahan UI tetap dari file lokal
-  const t = fullData.translations[lang]; 
+  const t = (fullData.translations as any)[lang] as Translations; 
 
   // --- EFFECTS ---
 
-  // --- 1. FETCH DATA DARI RENDER ---
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch('https://pasokari-api-271h.onrender.com/api/products');
-        
-        if (!res.ok) throw new Error('Gagal mengambil data');
-        
-        const data = await res.json();
-        setCategoryData(data); 
-      } catch (err) {
-        console.error("Gagal koneksi ke backend:", err);
-        setCategoryData(fullData.categoryData);
-      }
-    };
-
-    fetchProducts();
-  }, []);
+  // --- 1. FETCH DATA REMOVED (Server Side now) ---
 
   // 2. Init (Preloader, Theme, Cookie)
   useEffect(() => {
@@ -98,7 +87,7 @@ export default function HomeContent() {
       let current = 'home';
       if (window.scrollY > 200) {
         sections.forEach(sec => {
-          if (window.scrollY >= sec.offsetTop - 150) current = sec.getAttribute('id');
+          if (window.scrollY >= (sec as HTMLElement).offsetTop - 150) current = sec.getAttribute('id') || 'home';
         });
       }
       setActiveSection(current);
@@ -119,7 +108,7 @@ export default function HomeContent() {
 
   // 5. Keyboard Listener
   useEffect(() => {
-    const handleEsc = (e) => {
+    const handleEsc = (e: KeyboardEvent) => {
         if (e.key === 'Escape') {
             setCategoryModalOpen(false);
             setProductDetailOpen(false);
@@ -130,12 +119,13 @@ export default function HomeContent() {
   }, []);
 
   // --- HELPER FUNCTIONS ---
-  const handleSmoothScroll = (e, id) => {
+  const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     const el = document.getElementById(id);
     if (el) {
-        const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 70;
-        window.scrollTo({ top: el.offsetTop - navbarHeight, behavior: 'smooth' });
+        const navbar = document.querySelector('.navbar') as HTMLElement;
+        const navbarHeight = navbar?.offsetHeight || 70;
+        window.scrollTo({ top: (el as HTMLElement).offsetTop - navbarHeight, behavior: 'smooth' });
     }
   };
 
@@ -165,7 +155,7 @@ export default function HomeContent() {
       } else if (currentInquiry.type === 'product') {
           const catRaw = currentInquiry.category;
           const pID = currentInquiry.id;
-          if (categoryData[catRaw]) {
+          if (catRaw && categoryData[catRaw]) {
               const idx = categoryData[catRaw].id.products.indexOf(pID);
               if (idx !== -1) translatedName = categoryData[catRaw][lang]?.products[idx] || pID;
           }
@@ -190,7 +180,7 @@ export default function HomeContent() {
         {categoryData ? (
             <Products 
                 t={t} categoryData={categoryData} categoryKeys={categoryKeys}
-                onOpenModal={(cat) => { setSelectedCategory(cat); setCategoryModalOpen(true); setModalSearchTerm(''); }}
+                onOpenModal={(cat: string) => { setSelectedCategory(cat); setCategoryModalOpen(true); setModalSearchTerm(''); }}
             />
         ) : (
             <div className="py-20 text-center text-gray-500">Loading Products...</div>
@@ -221,7 +211,7 @@ export default function HomeContent() {
 
       {/* MODALS */}
       <Modal isOpen={categoryModalOpen} onClose={() => setCategoryModalOpen(false)} className="category-modal-content">
-          <h2>{selectedCategory && (t[categoryKeys[selectedCategory]?.title] || selectedCategory)}</h2>
+          <h2>{selectedCategory ? (t[categoryKeys[selectedCategory]?.title] || selectedCategory) : ''}</h2>
           <p>{selectedCategory && t[categoryKeys[selectedCategory]?.desc]}</p>
           <hr className="modal-divider" />
           <h3>{t.modalProductsTitle}</h3>
@@ -229,18 +219,35 @@ export default function HomeContent() {
           <div className="modal-product-grid">
               {getModalProducts().map(p => (
                   <div key={p.id} className="modal-product-item" onClick={() => { setSelectedProductDetail(p); setProductDetailOpen(true); }}>
-                      <img src={p.imgSrc} onError={(e) => e.target.style.display='none'} alt={p.display} />
+                      <div style={{ position: 'relative', width: '100%', height: '150px' }}>
+                        <NextImage 
+                          src={p.imgSrc} 
+                          alt={p.display} 
+                          fill 
+                          className="object-cover"
+                          sizes="(max-width: 768px) 50vw, 33vw"
+                          onError={(e) => (e.target as HTMLImageElement).style.display='none'} 
+                        />
+                      </div>
                       <p>{p.display}</p>
                   </div>
               ))}
           </div>
-          <a href="#contact" className="cta-button modal-cta" onClick={(e) => { e.preventDefault(); setCurrentInquiry({ type: 'category', id: selectedCategory }); setCategoryModalOpen(false); handleSmoothScroll(e, 'contact'); }}>{t.modalCTA}</a>
+          <a href="#contact" className="cta-button modal-cta" onClick={(e) => { e.preventDefault(); if (selectedCategory) { setCurrentInquiry({ type: 'category', id: selectedCategory, category: selectedCategory }); setCategoryModalOpen(false); handleSmoothScroll(e, 'contact'); } }}>{t.modalCTA}</a>
       </Modal>
 
       <Modal isOpen={productDetailOpen} onClose={() => setProductDetailOpen(false)} className="product-detail-content">
-          <img src={selectedProductDetail?.imgSrc} id="productDetailImage" alt="Detail" />
+          <div style={{ position: 'relative', width: '100%', height: '300px', marginBottom: '1rem' }}>
+            <NextImage 
+              src={selectedProductDetail?.imgSrc || ''} 
+              id="productDetailImage" 
+              alt="Detail" 
+              fill
+              className="object-contain"
+            />
+          </div>
           <h3>{selectedProductDetail?.display}</h3>
-          <a href="#contact" className="cta-button modal-cta" onClick={(e) => { e.preventDefault(); setCurrentInquiry({ type: 'product', id: selectedProductDetail.id, category: selectedCategory }); setProductDetailOpen(false); setCategoryModalOpen(false); handleSmoothScroll(e, 'contact'); }}>{t.productDetailCTA}</a>
+          <a href="#contact" className="cta-button modal-cta" onClick={(e) => { e.preventDefault(); if (selectedProductDetail && selectedCategory) { setCurrentInquiry({ type: 'product', id: selectedProductDetail.id, category: selectedCategory }); setProductDetailOpen(false); setCategoryModalOpen(false); handleSmoothScroll(e, 'contact'); } }}>{t.productDetailCTA}</a>
       </Modal>
     </>
   );

@@ -1,14 +1,25 @@
-'use client';
+import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
+import { Translations } from '../types';
 
-export default function Navbar({ t, lang, setLang, onSmoothScroll, activeSection }) {
+interface NavbarProps {
+  t: Translations;
+  lang: 'id' | 'en';
+  setLang: (lang: 'id' | 'en') => void;
+  darkMode: boolean;
+  setDarkMode: (mode: boolean) => void;
+  onSmoothScroll: (e: React.MouseEvent<HTMLAnchorElement>, id: string) => void;
+  activeSection: string;
+}
+
+export default function Navbar({ t, lang, setLang, onSmoothScroll, activeSection }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
-  const langRef = useRef(null);
+  const langRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (langDropdownOpen && langRef.current && !langRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (langDropdownOpen && langRef.current && !langRef.current.contains(event.target as Node)) {
         setLangDropdownOpen(false);
       }
     }
@@ -17,12 +28,12 @@ export default function Navbar({ t, lang, setLang, onSmoothScroll, activeSection
   }, [langDropdownOpen]);
 
   useEffect(() => {
-    const handleEsc = (e) => { if (e.key === 'Escape') { setMobileMenuOpen(false); setLangDropdownOpen(false); } };
+    const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') { setMobileMenuOpen(false); setLangDropdownOpen(false); } };
     document.addEventListener('keydown', handleEsc);
     return () => document.removeEventListener('keydown', handleEsc);
   }, []);
 
-  const handleNavClick = (e, section) => {
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, section: string) => {
       onSmoothScroll(e, section);
       setMobileMenuOpen(false);
   }
@@ -31,7 +42,7 @@ export default function Navbar({ t, lang, setLang, onSmoothScroll, activeSection
     <header className="navbar">
         <div className="nav-left">
           <a href="#home" className="logo-container" onClick={(e) => handleNavClick(e, 'home')}>
-            <img src="/assets/logo.png" className="logo" alt="Logo" /> <span className="brand-name">PASOKARI</span>
+            <Image src="/assets/logo.png" className="logo" alt="Logo" width={100} height={38} /> <span className="brand-name">PASOKARI</span>
           </a>
         </div>
         

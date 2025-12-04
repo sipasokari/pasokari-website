@@ -1,8 +1,13 @@
 'use client';
 import { useState } from 'react';
+import { Translations } from '../types';
 
-export default function FAQ({ t }) {
-  const [activeFaq, setActiveFaq] = useState(null);
+interface FAQProps {
+  t: Translations;
+}
+
+export default function FAQ({ t }: FAQProps) {
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
   return (
     <section id="faq" className="section-container">

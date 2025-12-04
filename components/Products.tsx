@@ -1,15 +1,23 @@
-'use client';
+import Image from 'next/image';
 import { useState } from 'react';
+import { CategoryData, Translations } from '../types';
 
-export default function Products({ t, categoryData, onOpenModal, categoryKeys }) {
+interface ProductsProps {
+  t: Translations;
+  categoryData: CategoryData;
+  onOpenModal: (cat: string) => void;
+  categoryKeys: Record<string, { title: string; desc: string }>;
+}
+
+export default function Products({ t, categoryData, onOpenModal, categoryKeys }: ProductsProps) {
   const [showAll, setShowAll] = useState(false);
 
   const allCategories = Object.keys(categoryData);
   // Tampilkan 3 kategori jika showAll false, tampilkan semua jika true
   const visibleCategories = showAll ? allCategories : allCategories.slice(0, 3);
 
-  const getCategoryImg = (cat) => {
-      const map = { 
+  const getCategoryImg = (cat: string) => {
+      const map: Record<string, string> = { 
         'Sayuran': 'sayuran.jpg', 
         'Herbs & Spices': 'herbs_spices.jpg', 
         'Buah-buahan': 'buah_buahan.jpg', 
@@ -19,7 +27,7 @@ export default function Products({ t, categoryData, onOpenModal, categoryKeys })
       return `/assets/categories/${map[cat]}`;
   };
 
-  const handle3DTilt = (e) => {
+  const handle3DTilt = (e: React.MouseEvent<HTMLDivElement>) => {
     const card = e.currentTarget;
     const rect = card.getBoundingClientRect();
     const rotateX = ((e.clientY - rect.top - rect.height/2) / (rect.height/2)) * -12;
@@ -27,7 +35,7 @@ export default function Products({ t, categoryData, onOpenModal, categoryKeys })
     card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
   };
 
-  const reset3DTilt = (e) => e.currentTarget.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale(1)`;
+  const reset3DTilt = (e: React.MouseEvent<HTMLDivElement>) => e.currentTarget.style.transform = `perspective(1000px) rotateX(0) rotateY(0) scale(1)`;
 
   return (
     <section id="products" className="section-container">
@@ -42,7 +50,13 @@ export default function Products({ t, categoryData, onOpenModal, categoryKeys })
               onMouseMove={handle3DTilt} 
               onMouseLeave={reset3DTilt}
             >
-                <img src={getCategoryImg(cat)} alt={cat} loading="lazy" />
+                <Image 
+                  src={getCategoryImg(cat)} 
+                  alt={cat} 
+                  fill 
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
                 {/* Gunakan mapping categoryKeys dari parent untuk judul */}
                 <h3>{t[categoryKeys[cat]?.title] || cat}</h3>
             </div>
