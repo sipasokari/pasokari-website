@@ -2,10 +2,10 @@ import { Translations } from '../types';
 
 interface FooterProps {
   t: Translations;
-  onSmoothScroll?: (e: React.MouseEvent<HTMLAnchorElement>, id: string) => void;
+
 }
 
-export default function Footer({ t, onSmoothScroll }: FooterProps) {
+export default function Footer({ t }: FooterProps) {
   const handleFaqClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const faqSection = document.getElementById('faq');

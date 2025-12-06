@@ -68,7 +68,6 @@ export default function HomeContent({ initialCategoryData }: HomeContentProps) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setDarkMode(false);
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDarkMode(true);
     }
     
@@ -199,7 +198,7 @@ export default function HomeContent({ initialCategoryData }: HomeContentProps) {
         <Contact 
             t={t} 
             currentInquiry={getTranslatedInquiry()} 
-            lang={lang}
+
             onResetInquiry={() => setCurrentInquiry(null)}
         />
       </main>

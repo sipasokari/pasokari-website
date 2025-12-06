@@ -5,11 +5,11 @@ import { Translations, Inquiry } from '../types';
 interface ContactProps {
   t: Translations;
   currentInquiry: Inquiry | null;
-  lang: 'id' | 'en';
+
   onResetInquiry: () => void;
 }
 
-export default function Contact({ t, currentInquiry, lang, onResetInquiry }: ContactProps) {
+export default function Contact({ t, currentInquiry, onResetInquiry }: ContactProps) {
   const [messageBody, setMessageBody] = useState('');
   const [formStatus, setFormStatus] = useState({ type: '', message: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
