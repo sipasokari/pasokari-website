@@ -44,7 +44,8 @@ export default function Gallery({ t }: GalleryProps) {
           {galleryImages.slice(0, visibleCount).map((item, idx) => (
               <div 
                 key={idx} 
-                className="gallery-item hidden-on-load" 
+                className="gallery-item" 
+                style={{ animationDelay: `${idx * 100}ms` }}
                 onClick={() => { setLightboxIndex(idx); setLightboxOpen(true); }}
               >
                   <Image 
