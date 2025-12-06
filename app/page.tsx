@@ -1,5 +1,6 @@
 import HomeContent from "../components/HomeContent";
 import fullData from "../data.json";
+import { getProductsFromDB } from "@/lib/data";
 
 export const metadata = {
   title: {
@@ -9,19 +10,11 @@ export const metadata = {
   description: 'Solusi Terpercaya Produk Pangan Berkualitas',
 }
 
-async function getProducts() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/products`, { cache: 'no-store' });
-    if (!res.ok) throw new Error('Failed to fetch data');
-    return res.json();
-  } catch (error) {
-    console.error("Failed to fetch products:", error);
-    return fullData.categoryData;
-  }
-}
-
 export default async function Home() {
-  const categoryData = await getProducts();
+  // Fetch directly from DB (Server Component)
+  // Fallback to local JSON if DB fails
+  const dbData = await getProductsFromDB();
+  const categoryData = dbData || fullData.categoryData;
 
   return (
     <HomeContent initialCategoryData={categoryData} />

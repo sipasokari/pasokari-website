@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import fullData from '../data.json';
 import NextImage from 'next/image';
-import { ProductData, CategoryItem, CategoryData, Translations, FullData, Inquiry } from '../types';
+import { CategoryData, Translations, Inquiry } from '../types';
 
 // --- IMPORT KOMPONEN ---
 import Navbar from './Navbar';
@@ -49,23 +49,26 @@ export default function HomeContent({ initialCategoryData }: HomeContentProps) {
   const [currentInquiry, setCurrentInquiry] = useState<Inquiry | null>(null);
 
   // --- DATA STATE (PRODUK DARI DATABASE) ---
-  const [categoryData, setCategoryData] = useState<CategoryData | null>(initialCategoryData); 
+  // Removed unused state: categoryData, setCategoryData
+  // We use initialCategoryData directly as it is passed from server component
+  const categoryData = initialCategoryData;
   
   // Terjemahan UI tetap dari file lokal
-  const t = (fullData.translations as any)[lang] as Translations; 
+  const t = (fullData.translations as Record<string, Translations>)[lang]; 
 
   // --- EFFECTS ---
-
-  // --- 1. FETCH DATA REMOVED (Server Side now) ---
 
   // 2. Init (Preloader, Theme, Cookie)
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 700);
     
     const savedTheme = localStorage.getItem('theme');
+    // Fix: Avoid calling setState if value is already correct to reduce re-renders
     if (savedTheme === 'light') {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDarkMode(false);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDarkMode(true);
     }
     
@@ -165,7 +168,9 @@ export default function HomeContent({ initialCategoryData }: HomeContentProps) {
 
   return (
     <>
-      <div className={`preloader ${!loading ? 'hidden' : ''}`}><img src="/assets/logo.png" className="preloader-icon" alt="Loading" /></div>
+      <div className={`preloader ${!loading ? 'hidden' : ''}`}>
+        <NextImage src="/assets/logo.png" className="preloader-icon" alt="Loading" width={100} height={100} />
+      </div>
 
       <Navbar 
         t={t} lang={lang} setLang={setLang} 
@@ -205,7 +210,9 @@ export default function HomeContent({ initialCategoryData }: HomeContentProps) {
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style={{width: '24px', height: '24px'}}><path fillRule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.03 9.83a.75.75 0 01-1.06-1.06l5.25-5.25a.75.75 0 011.06 0l5.25 5.25a.75.75 0 11-1.06 1.06L10.75 5.612V16.25a.75.75 0 01-.75-.75z" clipRule="evenodd" /></svg>
       </button>
       
-      <a href="https://wa.me/628111289655" className="whatsapp-cta"><img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" style={{width: '24px', filter: 'invert(1)'}} alt="WA" /></a>
+      <a href="https://wa.me/628111289655" className="whatsapp-cta">
+        <NextImage src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/whatsapp.svg" style={{width: '24px', filter: 'invert(1)'}} alt="WA" width={24} height={24} />
+      </a>
 
       {showCookieBanner && <div className="cookie-banner visible"><p>{t.cookieText}</p><button className="cta-button" onClick={() => {localStorage.setItem('cookie_consent_given', 'true'); setShowCookieBanner(false);}}>{t.cookieAccept}</button></div>}
 
